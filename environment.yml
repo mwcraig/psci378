@@ -9,4 +9,4 @@ dependencies:
   - ipympl
   - astropy
   - pyextremes
-- scipy
+  - scipy
