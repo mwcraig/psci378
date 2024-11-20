@@ -6,3 +6,7 @@ dependencies:
   - xeus-python
   - pandas
   - bqplot
+  - ipympl
+  - astropy
+  - pyextremes
+- scipy
