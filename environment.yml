@@ -8,5 +8,4 @@ dependencies:
   - bqplot
   - ipympl
   - astropy
-  - pyextremes
   - scipy
