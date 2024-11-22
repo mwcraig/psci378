@@ -122,7 +122,7 @@ class TempData:
             badd = np.zeros_like(self.display_temp.value, dtype=bool)
 
         foo = self.data_year_filter[~badd]
-
+        foo[self._colnames[self.extreme_type]] = foo[self._colnames[self.extreme_type]].filled(np.nan)
         if group_by is not None:
             foo = foo.group_by(group_by)
             with warnings.catch_warnings(action="ignore"):
@@ -146,7 +146,13 @@ class TempData:
             The column to group by.  If None, then no grouping is done.
         """
         if group_by is not None:
-            foo = self.data.group_by(group_by)
+            # Remove any masked temperature rows
+            mask = np.zeros(len(self.data), dtype=bool)
+            for column in self._colnames.values():
+                mask = mask | self.data[column].mask
+
+            foo = self.data[~mask]
+            foo = foo.group_by(group_by)
             with warnings.catch_warnings(action="ignore"):
                 new_foo = foo.groups.aggregate(np.nanmean)
         else:
