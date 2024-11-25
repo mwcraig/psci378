@@ -7,5 +7,7 @@ dependencies:
   - pandas
   - bqplot
   - ipympl
-  - astropy
+  - astropy 6.1.6
   - scipy
+  - wheel 0.45.0
+  - matplotlib-base  3.9.1
