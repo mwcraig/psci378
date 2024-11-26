@@ -114,7 +114,7 @@ class TempData:
         return (self.data['YEAR'].astype(np.int32).min(),
                 self.data['YEAR'].astype(np.int32).max())
 
-    def fit_trend(self, group_by=None):
+    def fit_trend(self, group_by=None, aggregate_by=np.nanmean):
 
         try:
             badd = self.display_temp.mask
@@ -123,20 +123,24 @@ class TempData:
 
         foo = self.data_year_filter[~badd]
         foo[self._colnames[self.extreme_type]] = foo[self._colnames[self.extreme_type]].filled(np.nan)
+
         if group_by is not None:
             foo = foo.group_by(group_by)
             with warnings.catch_warnings(action="ignore"):
-                new_foo = foo.groups.aggregate(np.nanmean)
+                new_foo = foo.groups.aggregate(aggregate_by)
         else:
             new_foo = foo
 
         column = self._colnames[self.extreme_type]
-        coeff = np.polyfit(new_foo["YEAR"], new_foo[column]
+
+        good_temps = ~np.isnan(new_foo[column])
+        coeff = np.polyfit(new_foo["YEAR"][good_temps], new_foo[column][good_temps]
                            .to(self.display_unit, equivalencies=units.temperature()), 1)
         p = np.polynomial.Polynomial(coeff[::-1])
+
         return p
 
-    def max_min_temps_by_year(self, group_by=None):
+    def max_min_temps_by_year(self, group_by=None, aggregate_by=np.nanmean):
         """
         Return the max or min temperature by year
 
@@ -154,7 +158,7 @@ class TempData:
             foo = self.data[~mask]
             foo = foo.group_by(group_by)
             with warnings.catch_warnings(action="ignore"):
-                new_foo = foo.groups.aggregate(np.nanmean)
+                new_foo = foo.groups.aggregate(aggregate_by)
         else:
             new_foo = self.data
 
