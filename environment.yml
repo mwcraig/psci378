@@ -8,6 +8,7 @@ dependencies:
   - bqplot
   - ipympl
   - astropy 6.1.6
+  - astropy-iers-data 0.2024.11.18.0.35.2
   - scipy
   - wheel 0.45.0
   - matplotlib-base  3.9.1
