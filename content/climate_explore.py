@@ -149,18 +149,19 @@ class TempData:
         group_by : str, optional
             The column to group by.  If None, then no grouping is done.
         """
+
         if group_by is not None:
             # Remove any masked temperature rows
-            mask = np.zeros(len(self.data), dtype=bool)
+            mask = np.zeros(len(self.data_year_filter), dtype=bool)
             for column in self._colnames.values():
-                mask = mask | self.data[column].mask
+                mask = mask | self.data_year_filter[column].mask
 
-            foo = self.data[~mask]
+            foo = self.data_year_filter[~mask]
             foo = foo.group_by(group_by)
             with warnings.catch_warnings(action="ignore"):
                 new_foo = foo.groups.aggregate(aggregate_by)
         else:
-            new_foo = self.data
+            new_foo = self.data_year_filter
 
         column = self._colnames[self.extreme_type]
         return new_foo['YEAR'], new_foo[column].to(self.display_unit, equivalencies=units.temperature())
